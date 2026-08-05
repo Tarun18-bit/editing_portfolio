@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────
+   DEEP DIVE — Global Design System
+   The palette of the void. Every token answers:
+   "Does this serve the Deep Dive experience?"
+───────────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Environment */
+  --color-void:    #030508;
+  --color-abyss:   #05070d;
+  --color-depth:   #080c14;
+  --color-surface: #0d1420;
+  --color-mist:    #1a2030;
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+
+  /* Cinema easing tokens */
+  --ease-cinema: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-depth:  cubic-bezier(0.16, 1, 0.30, 1);
+  --ease-heavy:  cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-dive:   cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.88);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    position: relative;
+    min-height: 100dvh;
+    background-color: transparent;
+  }
+
+  /* Hairline scrollbar — barely there, doesn't break immersion */
+  ::-webkit-scrollbar          { width: 1px; }
+  ::-webkit-scrollbar-track    { background: transparent; }
+  ::-webkit-scrollbar-thumb    { background: rgba(255, 255, 255, 0.05); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.10); }
+
+  /* Cinematic selection */
+  ::selection {
+    background: rgba(160, 190, 240, 0.18);
+    color: rgba(255, 255, 255, 0.95);
+  }
+}
+
+/* ─── Keyframes ─────────────────────────────────────────────────────── */
+
+/* Background ambient breathing */
+@keyframes bg-breathe {
+  0%, 100% { opacity: 0.50; transform: scale(1); }
+  50%       { opacity: 0.80; transform: scale(1.08); }
+}
+
+/* Atmospheric drift — left layer */
+@keyframes drift-left {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33%       { transform: translate(45px, -35px) rotate(2deg); }
+  66%       { transform: translate(-20px, 18px) rotate(-1deg); }
+}
+
+/* Atmospheric drift — right layer */
+@keyframes drift-right {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33%       { transform: translate(-45px, 30px) rotate(-2deg); }
+  66%       { transform: translate(22px, -18px) rotate(1deg); }
+}
+
+/* Vignette softly shifts opacity */
+@keyframes vignette-breathe {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 0.92; }
+}
+
+/* Scroll hint floats gently */
+@keyframes scroll-hint-float {
+  0%, 100% { transform: translateY(0);  opacity: 0.35; }
+  50%       { transform: translateY(8px); opacity: 0.65; }
+}
+
+/* Ping dot for the CTA button */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
