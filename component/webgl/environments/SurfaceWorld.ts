@@ -37,7 +37,7 @@ export class SurfaceWorld {
     // 2. Horizon Upper Atmosphere Sky Dome (Upper Hemisphere only)
     const skyGeo = new THREE.SphereGeometry(140, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.5);
     this.skyMaterial = new THREE.MeshBasicMaterial({
-      color: 0x0a2846,
+      color: 0xd8eeff,
       side: THREE.BackSide,
       transparent: true,
       opacity: 1.0,
