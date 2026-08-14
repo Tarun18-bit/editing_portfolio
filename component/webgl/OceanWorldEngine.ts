@@ -53,7 +53,7 @@ export class OceanWorldEngine {
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0xd4eeff, 1); // Near-white bright sky at surface
+    this.renderer.setClearColor(0xfafcff, 1); // Matches sky gradient zenith (near-white sun)
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.1;
 
