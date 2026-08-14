@@ -4,6 +4,7 @@ import React, { useRef, useCallback, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { executeSurfaceDive } from "@/component/animations/diveAnimation";
+import { triggerEngineDive } from "@/component/webgl/ThreeCanvas";
 import { useWorld } from "@/component/worlds/WorldProvider";
 
 const TITLE_LETTERS = ["T", "A", "R", "U", "N"] as const;
@@ -91,6 +92,11 @@ export default function MainHero() {
   const handleBeginExperience = useCallback(() => {
     if (isDiving || !containerRef.current) return;
     setIsDiving(true);
+
+    // Trigger physical 3D camera plunge through the water surface plane
+    triggerEngineDive(() => {
+      setIsDiving(false);
+    });
 
     executeSurfaceDive(containerRef.current, null, {
       onComplete: () => {
