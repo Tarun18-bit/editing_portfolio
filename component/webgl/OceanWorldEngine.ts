@@ -53,7 +53,7 @@ export class OceanWorldEngine {
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0x020a14, 1.0);
+    this.renderer.setClearColor(0x87c8e8, 1);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.1;
 
@@ -181,50 +181,57 @@ export class OceanWorldEngine {
   };
 
   private updateAtmosphere(p: number) {
-    const bg = this.scene.background as THREE.Color;
-
-    if (p < 0.15) {
-      // Surface & Shallows
-      const col = 0x051a2e;
-      bg.setHex(col);
-      this.fog.color.setHex(col);
-      this.fog.density = 0.012;
-      this.ambientLight.color.setHex(0x005577);
-      this.ambientLight.intensity = 1.4;
+    if (p < 0.08) {
+      // Above surface — bright open sky
+      const c = 0x87c8e8;
+      this.fog.color.setHex(c);
+      this.fog.density = 0.006;
+      this.renderer.setClearColor(c, 1);
+      this.ambientLight.color.setHex(0x88bbdd);
+      this.ambientLight.intensity = 2.2;
+      this.cameraSpotlight.intensity = 0.0;
+    } else if (p < 0.20) {
+      // Breaking the surface — transitioning into the shallows
+      const c = 0x0d4a6e;
+      this.fog.color.setHex(c);
+      this.fog.density = 0.010;
+      this.renderer.setClearColor(c, 1);
+      this.ambientLight.color.setHex(0x0066aa);
+      this.ambientLight.intensity = 1.6;
       this.cameraSpotlight.intensity = 0.5;
-    } else if (p < 0.35) {
-      // Coral Reef
-      const col = 0x031220;
-      bg.setHex(col);
-      this.fog.color.setHex(col);
+    } else if (p < 0.40) {
+      // Coral Reef — sunlit shallow ocean
+      const c = 0x04182a;
+      this.fog.color.setHex(c);
       this.fog.density = 0.016;
+      this.renderer.setClearColor(c, 1);
       this.ambientLight.color.setHex(0x003b55);
       this.ambientLight.intensity = 1.0;
       this.cameraSpotlight.intensity = 1.5;
-    } else if (p < 0.55) {
-      // Open Ocean
-      const col = 0x010a16;
-      bg.setHex(col);
-      this.fog.color.setHex(col);
+    } else if (p < 0.58) {
+      // Open Ocean — deep pelagic void
+      const c = 0x010c1c;
+      this.fog.color.setHex(c);
       this.fog.density = 0.014;
+      this.renderer.setClearColor(c, 1);
       this.ambientLight.color.setHex(0x001a33);
       this.ambientLight.intensity = 0.7;
       this.cameraSpotlight.intensity = 2.5;
-    } else if (p < 0.75) {
-      // Twilight Zone
-      const col = 0x00060e;
-      bg.setHex(col);
-      this.fog.color.setHex(col);
+    } else if (p < 0.78) {
+      // Twilight Zone — near total darkness
+      const c = 0x00060f;
+      this.fog.color.setHex(c);
       this.fog.density = 0.018;
+      this.renderer.setClearColor(c, 1);
       this.ambientLight.color.setHex(0x000c1a);
       this.ambientLight.intensity = 0.3;
       this.cameraSpotlight.intensity = 3.0;
     } else {
-      // Abyssal Trench & Ocean Floor
-      const col = 0x000206;
-      bg.setHex(col);
-      this.fog.color.setHex(col);
+      // Abyssal Trench & Ocean Floor — total void
+      const c = 0x000206;
+      this.fog.color.setHex(c);
       this.fog.density = 0.022;
+      this.renderer.setClearColor(c, 1);
       this.ambientLight.color.setHex(0x00040a);
       this.ambientLight.intensity = 0.15;
       this.cameraSpotlight.intensity = 4.0;
