@@ -14,9 +14,8 @@ export default function MainHero() {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const hintRef = useRef<HTMLDivElement>(null);
 
-  const { mouse, isDiving, setIsDiving } = useWorld();
+  const { isDiving, setIsDiving } = useWorld();
 
   useGSAP(() => {
     const letters = titleRef.current?.querySelectorAll<HTMLSpanElement>(".hero-letter");
@@ -50,8 +49,6 @@ export default function MainHero() {
       "-=0.8"
     );
 
-    tl.from(hintRef.current, { opacity: 0, duration: 1.0 }, "-=0.6");
-
     // Continuous subtle floating animation
     gsap.to(titleRef.current, {
       y: -10,
@@ -62,25 +59,34 @@ export default function MainHero() {
     });
   }, { scope: containerRef });
 
-  // Mouse inertia reaction
+  // Native mousemove listener for typography parallax without React re-renders
   useEffect(() => {
-    if (isDiving) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDiving) return;
+      const halfW = window.innerWidth / 2;
+      const halfH = window.innerHeight / 2;
+      const nx = (e.clientX - halfW) / halfW;
+      const ny = (e.clientY - halfH) / halfH;
 
-    gsap.to(titleRef.current, {
-      x: mouse.nx * 20,
-      y: mouse.ny * 10,
-      duration: 1.4,
-      ease: "power2.out",
-      overwrite: "auto",
-    });
+      gsap.to(titleRef.current, {
+        x: nx * 18,
+        y: ny * 8,
+        duration: 1.4,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
 
-    gsap.to(subtitleRef.current, {
-      x: mouse.nx * 12,
-      duration: 1.6,
-      ease: "power2.out",
-      overwrite: "auto",
-    });
-  }, [mouse, isDiving]);
+      gsap.to(subtitleRef.current, {
+        x: nx * 10,
+        duration: 1.6,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [isDiving]);
 
   const handleBeginExperience = useCallback(() => {
     if (isDiving || !containerRef.current) return;
@@ -149,10 +155,7 @@ export default function MainHero() {
         </div>
 
         {/* Scroll Hint */}
-        <div
-          ref={hintRef}
-          className="mt-14 flex flex-col items-center gap-3 animate-pulse"
-        >
+        <div className="mt-14 flex flex-col items-center gap-3 animate-pulse">
           <div className="h-10 w-[1px] bg-gradient-to-b from-transparent via-cyan-400 to-transparent" />
           <span className="font-mono text-[9px] font-medium tracking-[0.6em] text-cyan-200/80 uppercase">
             DIVE DEEPER TO DISCOVER

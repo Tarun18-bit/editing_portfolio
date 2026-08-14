@@ -1,10 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useRef } from "react";
+import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import { WORLDS, WorldTheme, getCurrentWorld } from "./worldConfig";
-import { Project, PROJECTS } from "@/component/projects/projectData";
+import { Project } from "@/component/projects/projectData";
 
-interface MouseState {
+export interface MouseState {
   x: number;
   y: number;
   nx: number; // Normalized -1 to +1
@@ -12,10 +12,10 @@ interface MouseState {
 }
 
 interface WorldContextType {
-  scrollProgress: number;
+  scrollProgressRef: React.RefObject<number>;
   setScrollProgress: (progress: number) => void;
   currentWorld: WorldTheme;
-  mouse: MouseState;
+  mouseRef: React.RefObject<MouseState>;
   selectedProject: Project | null;
   openProjectModal: (project: Project) => void;
   closeProjectModal: () => void;
@@ -26,70 +26,58 @@ interface WorldContextType {
 const WorldContext = createContext<WorldContextType | undefined>(undefined);
 
 export function WorldProvider({ children }: { children: React.ReactNode }) {
-  const [scrollProgress, setScrollProgressState] = useState(0);
+  const scrollProgressRef = useRef<number>(0);
+  const mouseRef = useRef<MouseState>({ x: 0, y: 0, nx: 0, ny: 0 });
+
   const [currentWorld, setCurrentWorld] = useState<WorldTheme>(WORLDS[0]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isDiving, setIsDiving] = useState(false);
-  const [mouse, setMouse] = useState<MouseState>({ x: 0, y: 0, nx: 0, ny: 0 });
 
-  const setScrollProgress = (progress: number) => {
+  const setScrollProgress = useCallback((progress: number) => {
     const clamped = Math.max(0, Math.min(1, progress));
-    setScrollProgressState((prev) => {
-      if (Math.abs(prev - clamped) < 0.0001) return prev;
-      return clamped;
-    });
+    scrollProgressRef.current = clamped;
 
     const world = getCurrentWorld(clamped);
     setCurrentWorld((prevWorld) => {
       if (prevWorld.id === world.id) return prevWorld;
       return world;
     });
-  };
+  }, []);
 
   useEffect(() => {
-    let rafId: number | null = null;
-
     const handleMouseMove = (e: MouseEvent) => {
-      if (rafId !== null) return;
-      rafId = requestAnimationFrame(() => {
-        const halfW = window.innerWidth / 2;
-        const halfH = window.innerHeight / 2;
-        const nx = Math.max(-1, Math.min(1, (e.clientX - halfW) / halfW));
-        const ny = Math.max(-1, Math.min(1, (e.clientY - halfH) / halfH));
+      const halfW = window.innerWidth / 2;
+      const halfH = window.innerHeight / 2;
+      const nx = Math.max(-1, Math.min(1, (e.clientX - halfW) / halfW));
+      const ny = Math.max(-1, Math.min(1, (e.clientY - halfH) / halfH));
 
-        setMouse({
-          x: e.clientX,
-          y: e.clientY,
-          nx,
-          ny,
-        });
-        rafId = null;
-      });
+      mouseRef.current = {
+        x: e.clientX,
+        y: e.clientY,
+        nx,
+        ny,
+      };
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      if (rafId !== null) cancelAnimationFrame(rafId);
-    };
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  const openProjectModal = (project: Project) => {
+  const openProjectModal = useCallback((project: Project) => {
     setSelectedProject(project);
-  };
+  }, []);
 
-  const closeProjectModal = () => {
+  const closeProjectModal = useCallback(() => {
     setSelectedProject(null);
-  };
+  }, []);
 
   return (
     <WorldContext.Provider
       value={{
-        scrollProgress,
+        scrollProgressRef,
         setScrollProgress,
         currentWorld,
-        mouse,
+        mouseRef,
         selectedProject,
         openProjectModal,
         closeProjectModal,

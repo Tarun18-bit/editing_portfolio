@@ -1,15 +1,39 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useWorld } from "@/component/worlds/WorldProvider";
 import { WORLDS } from "@/component/worlds/worldConfig";
 import { useCameraControls } from "@/component/camera/useCameraControls";
 
 export default function DepthHUD() {
-  const { scrollProgress, currentWorld } = useWorld();
+  const { scrollProgressRef, currentWorld } = useWorld();
   const { scrollToDepth } = useCameraControls();
 
-  const currentMeters = Math.round(scrollProgress * 11000);
+  const depthTextRef = useRef<HTMLSpanElement | null>(null);
+  const barRef = useRef<HTMLDivElement | null>(null);
+
+  // RAF loop for smooth 60 FPS HUD telemetry updates without React re-renders
+  useEffect(() => {
+    let animId: number;
+
+    const updateHUD = () => {
+      const p = scrollProgressRef.current || 0;
+      const meters = Math.round(p * 11000);
+
+      if (depthTextRef.current) {
+        depthTextRef.current.textContent = meters.toLocaleString();
+      }
+
+      if (barRef.current) {
+        barRef.current.style.height = `${p * 100}%`;
+      }
+
+      animId = requestAnimationFrame(updateHUD);
+    };
+
+    animId = requestAnimationFrame(updateHUD);
+    return () => cancelAnimationFrame(animId);
+  }, [scrollProgressRef]);
 
   return (
     <aside
@@ -28,8 +52,8 @@ export default function DepthHUD() {
 
       {/* Depth Readout */}
       <div className="flex items-baseline gap-1.5 rounded-full border border-white/15 bg-black/60 px-4 py-2 backdrop-blur-md">
-        <span className="text-lg font-extrabold text-cyan-300">
-          {currentMeters.toLocaleString()}
+        <span ref={depthTextRef} className="text-lg font-extrabold text-cyan-300">
+          0
         </span>
         <span className="text-[10px] font-bold text-cyan-100/80">M</span>
       </div>
@@ -41,8 +65,9 @@ export default function DepthHUD() {
         
         {/* Active Depth Progress Bar */}
         <div
-          className="absolute top-0 w-[2px] bg-cyan-400 shadow-[0_0_12px_#00e5ff] transition-all duration-200"
-          style={{ height: `${scrollProgress * 100}%` }}
+          ref={barRef}
+          className="absolute top-0 w-[2px] bg-cyan-400 shadow-[0_0_12px_#00e5ff]"
+          style={{ height: "0%" }}
         />
 
         {/* World Quick Nav Dots */}
@@ -55,7 +80,7 @@ export default function DepthHUD() {
               key={w.id}
               onClick={() => scrollToDepth(targetMid)}
               title={`${w.name} (${w.depthMeters}m)`}
-              className={`group relative z-10 flex h-4 w-4 items-center justify-center transition-transform hover:scale-125`}
+              className="group relative z-10 flex h-4 w-4 items-center justify-center transition-transform hover:scale-125"
             >
               <span
                 className={`h-2 w-2 rounded-full transition-all duration-300 ${
@@ -64,7 +89,6 @@ export default function DepthHUD() {
                     : "bg-white/40 hover:bg-cyan-400"
                 }`}
               />
-              {/* Tooltip on hover */}
               <span className="absolute right-6 hidden whitespace-nowrap rounded-md border border-white/20 bg-slate-950/90 px-2 py-1 text-[9px] text-white opacity-0 transition-opacity group-hover:flex group-hover:opacity-100">
                 0{idx + 1} // {w.name}
               </span>
