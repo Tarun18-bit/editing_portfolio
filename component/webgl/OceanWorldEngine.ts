@@ -44,16 +44,16 @@ export class OceanWorldEngine {
     this.camera = new THREE.PerspectiveCamera(55, aspect, 0.1, 800);
     this.camera.position.set(0, 10, 24); // Starting above surface
 
-    // 3. Renderer — alpha:true lets the CSS sky gradient show through at the surface
+    // 3. Renderer with solid opaque canvas
     this.renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: true,
       powerPreference: "high-performance",
-      alpha: true,
+      alpha: false,
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0x000000, 0); // Transparent at start — CSS sky shows through
+    this.renderer.setClearColor(0x020a14, 1.0);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.1;
 
@@ -181,56 +181,49 @@ export class OceanWorldEngine {
   };
 
   private updateAtmosphere(p: number) {
-    if (p < 0.10) {
-      // Surface — fully transparent, CSS sky gradient shows through
-      this.renderer.setClearColor(0x000000, 0);
-      this.fog.color.setHex(0x0a2239);
-      this.fog.density = 0.008;
-      this.ambientLight.color.setHex(0x005577);
-      this.ambientLight.intensity = 1.6;
-      this.cameraSpotlight.intensity = 0.0;
-    } else if (p < 0.28) {
-      // Breaking surface — fade from transparent to deep teal
-      const alpha = (p - 0.10) / 0.18;
-      const c = 0x041830;
-      this.renderer.setClearColor(c, alpha);
-      this.fog.color.setHex(c);
+    const bg = this.scene.background as THREE.Color;
+
+    if (p < 0.15) {
+      // Surface & Shallows
+      const col = 0x051a2e;
+      bg.setHex(col);
+      this.fog.color.setHex(col);
       this.fog.density = 0.012;
-      this.ambientLight.color.setHex(0x0055aa);
-      this.ambientLight.intensity = 1.3;
-      this.cameraSpotlight.intensity = 0.8;
-    } else if (p < 0.45) {
-      // Coral Reef — fully opaque dark ocean
-      const c = 0x04182a;
-      this.renderer.setClearColor(c, 1);
-      this.fog.color.setHex(c);
+      this.ambientLight.color.setHex(0x005577);
+      this.ambientLight.intensity = 1.4;
+      this.cameraSpotlight.intensity = 0.5;
+    } else if (p < 0.35) {
+      // Coral Reef
+      const col = 0x031220;
+      bg.setHex(col);
+      this.fog.color.setHex(col);
       this.fog.density = 0.016;
       this.ambientLight.color.setHex(0x003b55);
       this.ambientLight.intensity = 1.0;
       this.cameraSpotlight.intensity = 1.5;
-    } else if (p < 0.62) {
+    } else if (p < 0.55) {
       // Open Ocean
-      const c = 0x010c1c;
-      this.renderer.setClearColor(c, 1);
-      this.fog.color.setHex(c);
+      const col = 0x010a16;
+      bg.setHex(col);
+      this.fog.color.setHex(col);
       this.fog.density = 0.014;
       this.ambientLight.color.setHex(0x001a33);
       this.ambientLight.intensity = 0.7;
       this.cameraSpotlight.intensity = 2.5;
-    } else if (p < 0.80) {
+    } else if (p < 0.75) {
       // Twilight Zone
-      const c = 0x00060f;
-      this.renderer.setClearColor(c, 1);
-      this.fog.color.setHex(c);
+      const col = 0x00060e;
+      bg.setHex(col);
+      this.fog.color.setHex(col);
       this.fog.density = 0.018;
       this.ambientLight.color.setHex(0x000c1a);
       this.ambientLight.intensity = 0.3;
       this.cameraSpotlight.intensity = 3.0;
     } else {
       // Abyssal Trench & Ocean Floor
-      const c = 0x000206;
-      this.renderer.setClearColor(c, 1);
-      this.fog.color.setHex(c);
+      const col = 0x000206;
+      bg.setHex(col);
+      this.fog.color.setHex(col);
       this.fog.density = 0.022;
       this.ambientLight.color.setHex(0x00040a);
       this.ambientLight.intensity = 0.15;
