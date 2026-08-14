@@ -3,6 +3,7 @@
 import React from "react";
 import { WorldProvider } from "@/component/worlds/WorldProvider";
 import { useCameraControls } from "@/component/camera/useCameraControls";
+import Background from "@/component/ui/Background";
 import ThreeCanvas from "@/component/webgl/ThreeCanvas";
 import DepthHUD from "@/component/ui/DepthHUD";
 import MainHero from "@/component/hero/MainHero";
@@ -17,6 +18,9 @@ function OceanExperience() {
 
   return (
     <main className="relative min-h-screen selection:bg-cyan-400 selection:text-black">
+      {/* Dynamic World Background Color & Image Attenuation */}
+      <Background />
+
       {/* High-End Continuous 3D WebGL Ocean Universe */}
       <ThreeCanvas />
 

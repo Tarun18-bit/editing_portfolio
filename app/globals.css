@@ -37,7 +37,7 @@
   body {
     position: relative;
     min-height: 100dvh;
-    background-color: #020813;
+    background-color: transparent;
     color: #ffffff;
   }
 
