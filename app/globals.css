@@ -36,7 +36,7 @@
   }
 
   html {
-    background-color: transparent;
+    background-color: #020813;
     color: rgba(255, 255, 255, 0.88);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -47,7 +47,7 @@
   body {
     position: relative;
     min-height: 100dvh;
-    background-color: transparent;
+    background-color: #020813;
   }
 
   /* Hairline scrollbar — barely there, doesn't break immersion */
