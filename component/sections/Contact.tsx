@@ -1,118 +1,109 @@
 "use client";
 
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import React, { useState } from "react";
 
-/**
- * Contact — Floating Abyssal Sea Floor Layer.
- *
- * Ultra-sleek, extralight floating contact typography with zero container boxes.
- */
 export default function Contact() {
-  const containerRef = useRef<HTMLElement>(null);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [submitted, setSubmitted] = useState(false);
 
-  useGSAP(
-    () => {
-      const elements = containerRef.current?.querySelectorAll(".contact-anim");
-      if (elements && elements.length > 0) {
-        gsap.fromTo(
-          Array.from(elements),
-          { opacity: 0, y: 45, filter: "blur(12px)" },
-          {
-            opacity: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 1.2,
-            stagger: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: "top 70%",
-            },
-          }
-        );
-      }
-    },
-    { scope: containerRef }
-  );
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.email || !formData.message) return;
+    setSubmitted(true);
   };
 
   return (
-    <footer
-      ref={containerRef}
-      className="relative z-10 flex min-h-screen flex-col justify-between px-6 py-24 md:px-24"
-    >
-      {/* Top Header */}
-      <div className="contact-anim">
-        <span className="font-mono text-xs font-medium tracking-[0.5em] text-cyan-300/80 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-          03 // CONTACT &amp; INQUIRIES
-        </span>
-      </div>
-
-      {/* Main Call to Action */}
-      <div className="my-auto py-16">
-        <p className="contact-anim text-xs font-mono font-medium tracking-[0.4em] text-white/50 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-          READY TO CREATE SOMETHING UNFORGETTABLE?
-        </p>
-
-        <a
-          href="https://www.linkedin.com/in/tarun-maurya-680191382?utm_source=share_via&utm_content=profile&utm_medium=member_android"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="contact-anim group mt-8 block w-fit"
-        >
-          <h2 className="text-4xl font-extralight tracking-[0.08em] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] transition-all duration-700 group-hover:tracking-[0.14em] group-hover:text-cyan-200 sm:text-6xl md:text-8xl lg:text-9xl">
-            LET&apos;S TALK.
-          </h2>
-          <div className="h-[1px] w-full scale-x-0 bg-white/40 transition-transform duration-700 origin-left group-hover:scale-x-100" />
-        </a>
-      </div>
-
-      {/* Footer Meta Details */}
-      <div className="contact-anim flex flex-col justify-between gap-8 border-t border-white/15 pt-12 md:flex-row md:items-end">
-        <div>
-          <p className="text-xs font-mono font-medium tracking-[0.3em] text-white/40 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-            LOCATION
-          </p>
-          <p className="mt-2 text-sm font-light tracking-[0.2em] text-white/80 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-            AVAILABLE WORLDWIDE
-          </p>
-        </div>
-
-        <div className="flex gap-12 text-xs font-mono font-medium tracking-[0.3em] text-white/50 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-          <a
-            href="https://www.linkedin.com/in/tarun-maurya-680191382?utm_source=share_via&utm_content=profile&utm_medium=member_android"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-colors duration-300 hover:text-white"
-          >
-            LINKEDIN
-          </a>
-          <a
-            href="https://www.instagram.com/tarungotcaught?igsh=MXExaGhxOGFqOXFlMg=="
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-colors duration-300 hover:text-white"
-          >
-            INSTAGRAM
-          </a>
-        </div>
-
-        {/* Ascent Button */}
-        <button
-          onClick={scrollToTop}
-          className="group flex items-center gap-3 text-xs font-mono font-medium tracking-[0.4em] text-white/50 uppercase transition-colors duration-300 hover:text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]"
-        >
-          <span>ASCENT</span>
-          <span className="transition-transform duration-300 group-hover:-translate-y-1">
-            ↑
+    <section className="relative z-20 flex min-h-screen flex-col items-center justify-center px-4 py-28 md:px-12">
+      <div className="w-full max-w-4xl rounded-3xl border border-cyan-500/30 bg-slate-950/85 p-8 md:p-14 shadow-[0_0_100px_rgba(0,180,240,0.2)] backdrop-blur-xl">
+        
+        {/* Expedition End Header */}
+        <div className="text-center">
+          <span className="font-mono text-xs font-semibold tracking-[0.4em] text-cyan-400 uppercase">
+            SECTOR 06 // OCEAN FLOOR (11,000M)
           </span>
-        </button>
+          <h2 className="mt-3 text-3xl md:text-5xl font-light text-white tracking-tight">
+            EXPEDITION COMPLETE
+          </h2>
+          <p className="mt-4 max-w-xl mx-auto text-sm md:text-base font-light text-slate-300 leading-relaxed">
+            You have reached the deepest point of the portfolio. Let’s collaborate on your next high-impact video edit or motion project.
+          </p>
+        </div>
+
+        {/* Contact Form / Success Message */}
+        {submitted ? (
+          <div className="mt-10 rounded-2xl border border-cyan-400/40 bg-cyan-950/40 p-8 text-center">
+            <span className="text-3xl">📡</span>
+            <h3 className="mt-3 text-xl font-medium text-cyan-200">TRANSMISSION RECEIVED</h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Thank you for reaching out. I will respond to your message shortly.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="font-mono text-xs text-cyan-300 uppercase tracking-widest block mb-2">
+                  YOUR NAME
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Jane Doe"
+                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="font-mono text-xs text-cyan-300 uppercase tracking-widest block mb-2">
+                  YOUR EMAIL
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="jane@example.com"
+                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="font-mono text-xs text-cyan-300 uppercase tracking-widest block mb-2">
+                PROJECT DETAILS
+              </label>
+              <textarea
+                rows={4}
+                required
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                placeholder="Tell me about your video edit or timeline goals..."
+                className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition-all"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="mt-2 inline-flex items-center justify-center gap-3 rounded-full border border-cyan-400/50 bg-cyan-950/60 py-4 font-mono text-xs font-bold tracking-[0.4em] text-white uppercase backdrop-blur-md transition-all duration-300 hover:border-cyan-300 hover:bg-cyan-900 hover:shadow-[0_0_30px_rgba(0,229,255,0.4)]"
+            >
+              SEND TRANSMISSION
+            </button>
+          </form>
+        )}
+
+        {/* Social Links Footer */}
+        <div className="mt-12 flex flex-wrap items-center justify-between border-t border-white/10 pt-8 font-mono text-xs text-slate-400">
+          <span>TARUN // VIDEO EDITOR & MOTION DESIGNER</span>
+          <div className="flex gap-6">
+            <a href="mailto:contact@example.com" className="hover:text-cyan-300 transition-colors">EMAIL</a>
+            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-cyan-300 transition-colors">TWITTER / X</a>
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-cyan-300 transition-colors">LINKEDIN</a>
+          </div>
+        </div>
+
       </div>
-    </footer>
+    </section>
   );
 }

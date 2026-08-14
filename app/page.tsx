@@ -1,55 +1,54 @@
+"use client";
+
+import React from "react";
+import { WorldProvider } from "@/component/worlds/WorldProvider";
+import { useCameraControls } from "@/component/camera/useCameraControls";
 import Background from "@/component/ui/Background";
-import WaterCaustics from "@/component/ui/WaterCaustics";
-import OceanLayers from "@/component/ui/OceanLayers";
-import BubbleCanvas from "@/component/ui/BubbleCanvas";
-import FishSchoolCanvas from "@/component/ui/FishSchoolCanvas";
-import OceanCreatures from "@/component/ui/OceanCreatures";
-import MouseGlow from "@/component/ui/MouseGlow";
+import DynamicOceanCanvas from "@/component/ui/DynamicOceanCanvas";
 import DepthHUD from "@/component/ui/DepthHUD";
-import Intro from "@/component/intro/Intro";
 import MainHero from "@/component/hero/MainHero";
 import Story from "@/component/sections/Story";
 import Projects from "@/component/projects/Projects";
 import Contact from "@/component/sections/Contact";
+import VideoTheaterModal from "@/component/projects/VideoTheaterModal";
 
-/**
- * The Deep Dive — Spatially Distributed Ocean Ecosystem.
- *
- * All marine life (130 fish & 6 large species) are evenly distributed across
- * the full viewport width and height lanes (0% to 100% Y), eliminating clustering.
- */
-export default function Home() {
+function OceanExperience() {
+  // Initialize Lenis smooth scroll and camera depth tracking
+  useCameraControls();
+
   return (
-    // No bg here — Background.tsx owns the base color entirely
-    <main className="relative">
-      {/* Z -20: Base environment colour (Background) */}
+    <main className="relative min-h-screen selection:bg-cyan-400 selection:text-black">
+      {/* Dynamic World Background Color & Image Attenuation */}
       <Background />
 
-      {/* Z -10: Caustic beams & god rays above environment */}
-      <WaterCaustics />
+      {/* Unified 60 FPS Canvas Engine: Volumetric Light Rays, Particles & Creatures */}
+      <DynamicOceanCanvas />
 
-      {/* Z -10: Cavern rock walls & coral floor */}
-      <OceanLayers />
-
-      {/* Z 1: Canvas dynamics — bubbles, fish, creatures */}
-      <BubbleCanvas />
-      <FishSchoolCanvas />
-      <OceanCreatures />
-
-      {/* Z 1: Submarine searchlight */}
-      <MouseGlow />
-
-      {/* Z 40: Depth telemetry HUD */}
+      {/* Real-time Navigation Telemetry HUD */}
       <DepthHUD />
 
-      {/* Z 100: Entrance overlay */}
-      <Intro />
-
-      {/* Narrative sections — transparent backgrounds */}
+      {/* World 01: Surface & Shallow Ocean (Hero Intro) */}
       <MainHero />
+
+      {/* Story & Motion Philosophy */}
       <Story />
+
+      {/* World 02 -> 05: Multi-World Integrated Video Portals */}
       <Projects />
+
+      {/* World 06: Ocean Floor Expedition End (Contact Form) */}
       <Contact />
+
+      {/* Interactive Cinematic Fullscreen Video Theater Modal */}
+      <VideoTheaterModal />
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <WorldProvider>
+      <OceanExperience />
+    </WorldProvider>
   );
 }
