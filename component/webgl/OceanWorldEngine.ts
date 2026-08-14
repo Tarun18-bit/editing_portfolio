@@ -53,7 +53,7 @@ export class OceanWorldEngine {
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0x87c8e8, 1);
+    this.renderer.setClearColor(0xd4eeff, 1); // Near-white bright sky at surface
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.1;
 
@@ -181,23 +181,23 @@ export class OceanWorldEngine {
   };
 
   private updateAtmosphere(p: number) {
-    if (p < 0.08) {
-      // Above surface — bright open sky
-      const c = 0x87c8e8;
+    if (p < 0.10) {
+      // Above surface — near-white open sky
+      const c = 0xd4eeff;
       this.fog.color.setHex(c);
-      this.fog.density = 0.006;
+      this.fog.density = 0.004;
       this.renderer.setClearColor(c, 1);
-      this.ambientLight.color.setHex(0x88bbdd);
-      this.ambientLight.intensity = 2.2;
+      this.ambientLight.color.setHex(0xaad4ff);
+      this.ambientLight.intensity = 2.8;
       this.cameraSpotlight.intensity = 0.0;
-    } else if (p < 0.20) {
-      // Breaking the surface — transitioning into the shallows
-      const c = 0x0d4a6e;
+    } else if (p < 0.22) {
+      // Breaking the surface — light shifting to teal
+      const c = 0x1a6a8a;
       this.fog.color.setHex(c);
       this.fog.density = 0.010;
       this.renderer.setClearColor(c, 1);
-      this.ambientLight.color.setHex(0x0066aa);
-      this.ambientLight.intensity = 1.6;
+      this.ambientLight.color.setHex(0x0077bb);
+      this.ambientLight.intensity = 1.8;
       this.cameraSpotlight.intensity = 0.5;
     } else if (p < 0.40) {
       // Coral Reef — sunlit shallow ocean
