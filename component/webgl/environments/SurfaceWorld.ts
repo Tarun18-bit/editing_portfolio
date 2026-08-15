@@ -20,8 +20,8 @@ export class SurfaceWorld {
       uniforms: {
         uTime: { value: 0 },
         uSunDirection: { value: new THREE.Vector3(0.5, 0.8, 0.3).normalize() },
-        uWaterColorDeep: { value: new THREE.Color(0x02162e) },
-        uWaterColorShallow: { value: new THREE.Color(0x00b4d8) },
+        uWaterColorDeep: { value: new THREE.Color(0x004466) },
+        uWaterColorShallow: { value: new THREE.Color(0x00f0ff) },
         uSunColor: { value: new THREE.Color(0xffffff) },
         uCameraPosition: { value: new THREE.Vector3() },
       },
@@ -58,8 +58,8 @@ export class SurfaceWorld {
         }
       `,
       uniforms: {
-        uColorTop: { value: new THREE.Color(0x010c1e) },    // Deep zenith sky
-        uColorBottom: { value: new THREE.Color(0x60b0d0) }, // Brighter horizon
+        uColorTop: { value: new THREE.Color(0x0066cc) },    // Vibrant sky blue zenith
+        uColorBottom: { value: new THREE.Color(0x80e5ff) }, // Bright cyan/sky horizon
         uOpacity: { value: 1.0 },
       },
       transparent: true,

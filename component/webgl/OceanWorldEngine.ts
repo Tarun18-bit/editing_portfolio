@@ -35,9 +35,9 @@ export class OceanWorldEngine {
   constructor(canvas: HTMLCanvasElement) {
     // 1. Scene
     this.scene = new THREE.Scene();
-    this.fog = new THREE.FogExp2(0x021024, 0.015);
+    this.fog = new THREE.FogExp2(0x60c0ff, 0.007);
     this.scene.fog = this.fog;
-    this.scene.background = new THREE.Color(0x021024);
+    this.scene.background = new THREE.Color(0x60c0ff);
 
     // 2. Camera
     const aspect = window.innerWidth / window.innerHeight;
@@ -180,52 +180,41 @@ export class OceanWorldEngine {
   };
 
   private updateAtmosphere(p: number) {
-    if (p < 0.15) {
-      // Surface & Shallows
-      const color = 0x0a2239;
-      this.fog.color.setHex(color);
-      if (this.scene.background instanceof THREE.Color) this.scene.background.setHex(color);
-      this.fog.density = 0.012;
-      this.ambientLight.color.setHex(0x005577);
-      this.ambientLight.intensity = 1.4;
-      this.cameraSpotlight.intensity = 0.5;
-    } else if (p < 0.35) {
-      // Coral Reef
-      const color = 0x04182a;
-      this.fog.color.setHex(color);
-      if (this.scene.background instanceof THREE.Color) this.scene.background.setHex(color);
-      this.fog.density = 0.016;
-      this.ambientLight.color.setHex(0x003b55);
-      this.ambientLight.intensity = 1.0;
-      this.cameraSpotlight.intensity = 1.5;
-    } else if (p < 0.55) {
-      // Open Ocean
-      const color = 0x010c1c;
-      this.fog.color.setHex(color);
-      if (this.scene.background instanceof THREE.Color) this.scene.background.setHex(color);
-      this.fog.density = 0.014;
-      this.ambientLight.color.setHex(0x001a33);
-      this.ambientLight.intensity = 0.7;
-      this.cameraSpotlight.intensity = 2.5;
-    } else if (p < 0.75) {
-      // Twilight Zone
-      const color = 0x00060f;
-      this.fog.color.setHex(color);
-      if (this.scene.background instanceof THREE.Color) this.scene.background.setHex(color);
-      this.fog.density = 0.018;
-      this.ambientLight.color.setHex(0x000c1a);
-      this.ambientLight.intensity = 0.3;
-      this.cameraSpotlight.intensity = 3.0;
-    } else {
-      // Abyssal Trench & Ocean Floor
-      const color = 0x000206;
-      this.fog.color.setHex(color);
-      if (this.scene.background instanceof THREE.Color) this.scene.background.setHex(color);
-      this.fog.density = 0.022;
-      this.ambientLight.color.setHex(0x00040a);
-      this.ambientLight.intensity = 0.15;
-      this.cameraSpotlight.intensity = 4.0;
+    const keyframes = [
+      { p: 0.0,  fogColor: 0x60c0ff, fogDensity: 0.007, ambientColor: 0x0077aa, ambientInt: 1.6, spotInt: 0.2 },
+      { p: 0.25, fogColor: 0x04182a, fogDensity: 0.016, ambientColor: 0x003b55, ambientInt: 1.0, spotInt: 1.5 },
+      { p: 0.45, fogColor: 0x010c1c, fogDensity: 0.014, ambientColor: 0x001a33, ambientInt: 0.7, spotInt: 2.5 },
+      { p: 0.65, fogColor: 0x00060f, fogDensity: 0.018, ambientColor: 0x000c1a, ambientInt: 0.3, spotInt: 3.0 },
+      { p: 0.85, fogColor: 0x000206, fogDensity: 0.022, ambientColor: 0x00040a, ambientInt: 0.15, spotInt: 4.0 },
+      { p: 1.0,  fogColor: 0x000104, fogDensity: 0.020, ambientColor: 0x000206, ambientInt: 0.12, spotInt: 4.0 }
+    ];
+
+    let startIndex = 0;
+    for (let i = 0; i < keyframes.length - 1; i++) {
+      if (p >= keyframes[i].p && p <= keyframes[i+1].p) {
+        startIndex = i;
+        break;
+      }
     }
+
+    const k0 = keyframes[startIndex];
+    const k1 = keyframes[startIndex + 1];
+    const t = (p - k0.p) / (k1.p - k0.p);
+
+    this.fog.density = k0.fogDensity + t * (k1.fogDensity - k0.fogDensity);
+    this.ambientLight.intensity = k0.ambientInt + t * (k1.ambientInt - k0.ambientInt);
+    this.cameraSpotlight.intensity = k0.spotInt + t * (k1.spotInt - k0.spotInt);
+
+    const cFog0 = new THREE.Color(k0.fogColor);
+    const cFog1 = new THREE.Color(k1.fogColor);
+    this.fog.color.copy(cFog0).lerp(cFog1, t);
+    if (this.scene.background instanceof THREE.Color) {
+      this.scene.background.copy(this.fog.color);
+    }
+
+    const cAmb0 = new THREE.Color(k0.ambientColor);
+    const cAmb1 = new THREE.Color(k1.ambientColor);
+    this.ambientLight.color.copy(cAmb0).lerp(cAmb1, t);
   }
 
   public destroy() {

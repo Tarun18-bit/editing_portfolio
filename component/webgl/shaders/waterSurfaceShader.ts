@@ -85,18 +85,18 @@ export const waterSurfaceFragmentShader = /* glsl */ `
     vec3 waterColor = mix(uWaterColorDeep, uWaterColorShallow, depthFactor);
 
     // Combine sky reflection + water refraction + sun glint
-    vec3 skyColor = vec3(0.06, 0.22, 0.38); // Darker blue reflection to match atmospheric dusk
-    vec3 finalColor = mix(waterColor, skyColor, fresnel * 0.6) + specular;
+    vec3 skyColor = vec3(0.7, 0.9, 1.0); // Bright sky reflection
+    vec3 finalColor = mix(waterColor, skyColor, fresnel * 0.75) + specular;
 
-    // Distance fog blend to merge water plane edge seamlessly with the horizon sky
+    // Distance fog blend to merge water plane edge seamlessly with the bright sky horizon
     float viewDistance = length(uCameraPosition - vWorldPosition);
-    float fogFactor = 1.0 - exp(-0.018 * viewDistance); // Smooth exponential fog curves
+    float fogFactor = 1.0 - exp(-0.015 * viewDistance);
     fogFactor = clamp(fogFactor, 0.0, 1.0);
 
-    vec3 fogColor = vec3(0.01, 0.08, 0.18); // Matches the deep 0x0a2239 sector background color
+    vec3 fogColor = vec3(0.4, 0.8, 1.0); // Bright sky blue horizon color
     vec3 finalColorWithFog = mix(finalColor, fogColor, fogFactor);
 
     // Subtle edge transparency
-    gl_FragColor = vec4(finalColorWithFog, 0.95);
+    gl_FragColor = vec4(finalColorWithFog, 0.9);
   }
 `;

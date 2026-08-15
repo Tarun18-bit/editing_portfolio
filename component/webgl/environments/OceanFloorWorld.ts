@@ -38,19 +38,26 @@ export class OceanFloorWorld {
     floorMesh.position.set(0, -10, 0);
     this.group.add(floorMesh);
 
-    // Seabed Boulder Formations
-    const rockGeo = new THREE.DodecahedronGeometry(4, 1);
+    // Seabed Boulder Formations - 28 detailed boulders of varying scales
     const rockMat = new THREE.MeshStandardMaterial({
-      color: 0x0a1420,
+      color: 0x070e17,
       roughness: 0.9,
     });
 
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 28; i++) {
+      const size = 1.8 + Math.random() * 4.5;
+      const rockGeo = new THREE.DodecahedronGeometry(size, 1);
       const rock = new THREE.Mesh(rockGeo, rockMat);
-      const angle = (i / 8) * Math.PI * 2;
-      const r = 20 + Math.random() * 25;
-      rock.position.set(Math.cos(angle) * r, -8 + Math.random() * 2, Math.sin(angle) * r);
-      rock.scale.set(1 + Math.random() * 1.5, 0.8 + Math.random(), 1 + Math.random());
+      
+      const angle = (i / 28) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+      const r = 10 + Math.random() * 32;
+      rock.position.set(Math.cos(angle) * r, -10 + Math.random() * 3.0, Math.sin(angle) * r);
+      rock.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+      rock.scale.set(1 + Math.random() * 0.6, 0.7 + Math.random() * 0.8, 1 + Math.random() * 0.6);
       this.group.add(rock);
     }
   }
